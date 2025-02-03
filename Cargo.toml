@@ -1,0 +1,9 @@
+[package]
+name = "mlx90640-capture"
+version = "0.1.0"
+edition = "2021"
+authors = ["Ivan Ganev <iganev@cytec.bg>"]
+
+[dependencies]
+rpmlx90640 = "0"
+image = "0"
