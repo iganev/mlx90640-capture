@@ -9,6 +9,7 @@ use rpmlx90640::take_image;
 use rpmlx90640::PIXELS_HEIGHT;
 use rpmlx90640::PIXELS_WIDTH;
 
+/// scale up the width and height of the final image
 pub const INTERPOLATION: usize = 25;
 
 fn main() -> Result<()> {
@@ -34,7 +35,7 @@ fn main() -> Result<()> {
     output_image.save("output.jpg")?;
 
     println!(
-        "Temperature min={} max={}",
+        "Tmin={} Tmax={}",
         camera_image.temperature_read.min_temp, camera_image.temperature_read.max_temp
     );
 
