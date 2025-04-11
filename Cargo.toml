@@ -3,13 +3,21 @@ name = "mlx90640-capture"
 version = "0.1.0"
 edition = "2021"
 authors = ["Ivan Ganev <iganev@cytec.bg>"]
+description = "Image capture utility for MLX90640 cameras"
+keywords = ["melexis", "mlx", "mlx90640", "image", "capture"]
+categories = ["embedded", "command-line-utilities", "multimedia", "hardware-support", "visualization"]
+homepage = "https://github.com/iganev/mlx90640-capture"
+repository = "https://github.com/iganev/mlx90640-capture"
+documentation = "https://docs.rs/crate/mlx90640-capture/"
+readme = "README.md"
+license = "MIT"
 
 [dependencies]
 # CLI Args
 clap = { version = "4", features = ["derive"] }
 clap-num = "1"
 
-#Utils
+# Utils
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
@@ -24,3 +32,10 @@ linux-embedded-hal = "0.3" # Latest version causes trait bound issues
 
 # Output image generation
 image = "0"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = "symbols"

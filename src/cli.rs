@@ -1,5 +1,6 @@
 use clap::Parser;
 use clap_num::maybe_hex;
+use rpmlx90640::ColorTypes;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -17,6 +18,10 @@ pub struct CliArgs {
     /// Interpolation scale factor
     #[arg(short = 'i', long, value_parser = clap::value_parser!(u16).range(1..100))]
     pub interpolation: Option<u16>,
+
+    /// Image color type: hue, gray, cheap; default: hue
+    #[arg(short = 'c', long)]
+    pub color: Option<ColorTypes>,
 
     /// Horizontal flip
     #[arg(long, default_value = "false")]

@@ -115,7 +115,8 @@ fn run(opts: &CliArgs) -> Result<Stats> {
     }
 
     if let Some(output_filename) = opts.output.as_deref() {
-        let camera_image = color_image(&rpmlx90640::ColorTypes::Hue, &camera_data);
+        let color_type = opts.color.unwrap_or(rpmlx90640::ColorTypes::Hue);
+        let camera_image = color_image(&color_type, &camera_data);
 
         let mut output_image = ImageBuffer::new(PIXELS_WIDTH as u32, PIXELS_HEIGHT as u32);
 
