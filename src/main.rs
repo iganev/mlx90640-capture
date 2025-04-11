@@ -131,6 +131,10 @@ fn run(opts: &CliArgs) -> Result<Stats> {
 
     let interpolation = opts.interpolation.unwrap_or(1);
 
+    if interpolation < 1 {
+        return Err(anyhow!("Interpolation cannot be less than 1"));
+    }
+
     // there's a PoI defined and its raw (not scaled)
     if opts.poix.is_some() && opts.poiy.is_some() {
         let poix = opts.poix.unwrap_or(0);
@@ -139,7 +143,7 @@ fn run(opts: &CliArgs) -> Result<Stats> {
         let poi_index = if !opts.pois {
             poiy * PIXELS_WIDTH + poix
         } else {
-            (poiy % interpolation) * PIXELS_WIDTH + (poix % interpolation)
+            (poiy / interpolation) * PIXELS_WIDTH + (poix / interpolation)
         };
         stats.t_poi = camera_data.temperature_grid.get(poi_index).cloned();
     }
