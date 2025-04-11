@@ -52,6 +52,10 @@ pub struct CliArgs {
     #[arg(short = 'y', long)]
     pub poiy: Option<usize>,
 
+    /// Point of interest crosshair
+    #[arg(long, default_value = "false")]
+    pub poic: bool,
+
     /// Output filename; Defaults to no file output; Use `-` (dash) to output to stdout
     #[arg(short = 'o', long)]
     pub output: Option<String>,
@@ -166,6 +170,46 @@ fn run(opts: &CliArgs) -> Result<Stats> {
             (PIXELS_HEIGHT * opts.interpolation.unwrap_or(1)) as u32,
             FilterType::Lanczos3,
         );
+
+        // draw crosshair
+        if opts.poic {
+            let poix = if opts.pois {
+                opts.poix.unwrap_or(0)
+            } else {
+                opts.poix.unwrap_or(0) * interpolation
+            };
+            let poiy = if opts.pois {
+                opts.poiy.unwrap_or(0)
+            } else {
+                opts.poiy.unwrap_or(0) * interpolation
+            };
+
+            // (x-1),y; (x-2),y; (x+1),y, (x+2),y; x,(y-1); x,(y-2); x,(y+1); x,(y+2);
+            let crosshair_pixels: Vec<(i64, i64)> = vec![
+                ((poix - 1) as i64, poiy as i64),
+                ((poix - 2) as i64, poiy as i64),
+                ((poix + 1) as i64, poiy as i64),
+                ((poix + 2) as i64, poiy as i64),
+                (poix as i64, (poiy - 1) as i64),
+                (poix as i64, (poiy - 2) as i64),
+                (poix as i64, (poiy + 1) as i64),
+                (poix as i64, (poiy + 2) as i64),
+            ];
+
+            for (x, y) in crosshair_pixels {
+                if x < 0
+                    || y < 0
+                    || x > output_image.width() as i64
+                    || y > output_image.height() as i64
+                {
+                    continue;
+                }
+
+                if let Some(pixel) = output_image.get_pixel_mut_checked(x as u32, y as u32) {
+                    *pixel = [255u8 - pixel.0[0], 255u8 - pixel.0[1], 255u8 - pixel.0[2]].into();
+                }
+            }
+        }
 
         if output_filename == "-" {
             // output JPG to stdout
