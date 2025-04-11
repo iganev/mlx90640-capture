@@ -33,15 +33,8 @@ pub fn get_mlx90640_frame(bus: Option<&str>, address: Option<u8>) -> Result<Temp
                 .generate_image_if_ready(&mut temperatures)
                 .map_err(|e| anyhow!("Error reading frame data from camera: {}", e))?;
 
-            let min = temperatures
-                .iter()
-                .cloned()
-                .fold(f32::INFINITY, |a, b| a.min(b));
-
-            let max = temperatures
-                .iter()
-                .cloned()
-                .fold(f32::INFINITY, |a, b| a.max(b));
+            let min = temperatures.iter().cloned().fold(f32::MAX, |a, b| a.min(b));
+            let max = temperatures.iter().cloned().fold(f32::MIN, |a, b| a.max(b));
 
             // wrap result in the convenient package of the rpmlx90640 driver
             return Ok(TemperatureRead {
