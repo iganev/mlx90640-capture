@@ -70,7 +70,7 @@ fn main() {
 
 fn run(opts: &CliArgs) -> Result<Stats> {
     // get camera reading
-    let camera_data = get_mlx90640_frame(None, None)?;
+    let camera_data = get_mlx90640_frame(opts.bus.as_deref(), opts.address)?;
 
     // start building result
     let mut stats = Stats {
@@ -99,11 +99,7 @@ fn run(opts: &CliArgs) -> Result<Stats> {
         camera_data
     };
 
-    let interpolation = opts.interpolation.unwrap_or(1);
-
-    if interpolation < 1 {
-        return Err(anyhow!("Interpolation cannot be less than 1"));
-    }
+    let interpolation = opts.interpolation.unwrap_or(1) as usize;
 
     // there's a PoI defined and its raw (not scaled)
     if opts.poix.is_some() && opts.poiy.is_some() {
@@ -132,8 +128,8 @@ fn run(opts: &CliArgs) -> Result<Stats> {
 
         output_image = resize(
             &output_image,
-            (PIXELS_WIDTH * opts.interpolation.unwrap_or(1)) as u32,
-            (PIXELS_HEIGHT * opts.interpolation.unwrap_or(1)) as u32,
+            (PIXELS_WIDTH * interpolation) as u32,
+            (PIXELS_HEIGHT * interpolation) as u32,
             FilterType::Lanczos3,
         );
 

@@ -15,8 +15,7 @@ pub fn get_mlx90640_frame(bus: Option<&str>, address: Option<u8>) -> Result<Temp
             // default address is 0x33
             let addr = address.unwrap_or(0x33);
 
-            let i2c_bus = I2cdev::new(bus)
-                .map_err(|e| anyhow!("I2C Bus {} needs to be an I2C controller: {}", bus, e))?;
+            let i2c_bus = I2cdev::new(bus).map_err(|e| anyhow!("I2C Bus {} error: {}", bus, e))?;
 
             let mut camera = Mlx90640Driver::new(i2c_bus, addr)?;
 
