@@ -1,4 +1,5 @@
 use clap::Parser;
+use clap_num::maybe_hex;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -9,7 +10,7 @@ pub struct CliArgs {
     pub bus: Option<String>,
 
     /// I2C Address; Works only when bus is selected; defaults to 0x33
-    #[arg(short = 'a', long)]
+    #[arg(short = 'a', long, value_parser=maybe_hex::<u8>)]
     pub address: Option<u8>,
 
     // Processing params
