@@ -1,3 +1,7 @@
+pub(crate) mod cli;
+pub(crate) mod driver;
+pub(crate) mod flip;
+
 use std::io::BufWriter;
 use std::io::Cursor;
 use std::io::Write;
@@ -7,6 +11,10 @@ use anyhow::Result;
 
 use clap::Parser;
 
+use cli::CliArgs;
+use driver::get_mlx90640_frame;
+use flip::horizontal_flip;
+use flip::vertical_flip;
 use image::imageops::resize;
 use image::imageops::FilterType;
 use image::ImageBuffer;
@@ -15,55 +23,13 @@ use image::Rgb;
 use itertools::Itertools;
 
 use rpmlx90640::mlx_image::color_image;
-use rpmlx90640::read_temperatures;
 use rpmlx90640::TemperatureRead;
 use rpmlx90640::PIXELS_HEIGHT;
 use rpmlx90640::PIXELS_WIDTH;
-use rpmlx90640::PIXEL_COUNT;
 
 use serde::Deserialize;
 use serde::Serialize;
 use serde_json::json;
-
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-pub struct CliArgs {
-    /// Interpolation scale factor
-    #[arg(short = 'i', long)]
-    pub interpolation: Option<usize>,
-
-    /// Horizontal flip
-    #[arg(long, default_value = "false")]
-    pub hflip: bool,
-
-    /// Vertical flip
-    #[arg(long, default_value = "false")]
-    pub vflip: bool,
-
-    /// Point of interest coordinates are scaled up, instead of raw
-    #[arg(long, default_value = "false")]
-    pub pois: bool,
-
-    /// Point of interest X coordinate
-    #[arg(short = 'x', long)]
-    pub poix: Option<usize>,
-
-    /// Point of interest Y coordinate
-    #[arg(short = 'y', long)]
-    pub poiy: Option<usize>,
-
-    /// Point of interest crosshair
-    #[arg(long, default_value = "false")]
-    pub poic: bool,
-
-    /// Output filename; Defaults to no file output; Use `-` (dash) to output to stdout
-    #[arg(short = 'o', long)]
-    pub output: Option<String>,
-
-    /// Text output in stderr as JSON
-    #[arg(long, default_value = "false")]
-    pub json: bool,
-}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Stats {
@@ -104,7 +70,7 @@ fn main() {
 
 fn run(opts: &CliArgs) -> Result<Stats> {
     // get camera reading
-    let camera_data = read_temperatures().map_err(|e| anyhow!("MLX90640 Error: {}", e))?;
+    let camera_data = get_mlx90640_frame(None, None)?;
 
     // start building result
     let mut stats = Stats {
@@ -238,28 +204,4 @@ fn run(opts: &CliArgs) -> Result<Stats> {
     }
 
     Ok(stats)
-}
-
-fn horizontal_flip(temperatures: &mut [f32; PIXEL_COUNT]) {
-    for y in 0..PIXELS_HEIGHT {
-        let row_start = y * PIXELS_WIDTH;
-
-        for x in 0..(PIXELS_WIDTH / 2) {
-            let left_pixel = row_start + x;
-            let right_pixel = row_start + (PIXELS_WIDTH - 1 - x);
-
-            temperatures.swap(left_pixel, right_pixel);
-        }
-    }
-}
-
-fn vertical_flip(temperatures: &mut [f32; PIXEL_COUNT]) {
-    for y in 0..(PIXELS_HEIGHT / 2) {
-        let top_row = y * PIXELS_WIDTH;
-        let bottom_row = (PIXELS_HEIGHT - 1 - y) * PIXELS_WIDTH;
-
-        for x in 0..PIXELS_WIDTH {
-            temperatures.swap(top_row + x, bottom_row + x);
-        }
-    }
 }

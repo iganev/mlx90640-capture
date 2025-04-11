@@ -5,10 +5,21 @@ edition = "2021"
 authors = ["Ivan Ganev <iganev@cytec.bg>"]
 
 [dependencies]
+# CLI Args
 clap = { version = "4", features = ["derive"] }
+
+#Utils
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = { version = "1", features = ["preserve_order"] }
 itertools = "0"
+
+# MLX90640 Drivers
+# RPI Driver
 rpmlx90640 = "0"
+# Universal Linux Embedded Driver
+mlx9064x = "0"
+linux-embedded-hal = "0.3" # Latest version causes trait bound issues
+
+# Output image generation
 image = "0"
