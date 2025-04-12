@@ -1,3 +1,7 @@
+[![crates.io](https://img.shields.io/crates/v/mlx90640-capture?color=4d76ae)](https://crates.io/crates/mlx90640-capture)
+[![dependency status](https://deps.rs/repo/github/iganev/mlx90640-capture/status.svg)](https://deps.rs/repo/github/iganev/mlx90640-capture)
+[![build](https://github.com/iganev/mlx90640-capture/actions/workflows/rust.yml/badge.svg)](https://github.com/iganev/mlx90640-capture/actions/workflows/rust.yml)
+
 # mlx90640-capture
 
 Image capture utility for MLX90640 cameras.  
@@ -17,7 +21,7 @@ cargo install mlx90640-capture
 
 ## Usage
 
-### I2C Bus and Drvice Address
+### I2C Bus and Device Address
 By default uses a Raspberry Pi HAL based driver and looks for Raspberry Pi's default I2C bus and device address.  
 Providing `--bus /dev/i2c-1` (and optionally `--address 0x33`) switches the camera driver to a Linux Embedded HAL based driver. Use this for any system other than Raspberry Pi. The optional `--address` argument accepts both decimal (51) and hex (0x33) values.  
 
@@ -31,7 +35,7 @@ The default color type is `hue`. Selecting a color type will change how the resu
 **Cheap**: Faster color image method using just blue (for cold regions), green (for medium temperatures) and red (for warmer regions).  
 **Gray**: Grayscale image. Fastest method. Black for colder regions transitioning to white for warmer regions.
 
-### Vertical and Horizontal flip
+### Horizontal and Vertical flip
 
 The two flags `--hflip` and `--vflip` allow the user to adjust the image in case the camera is mounted upside down. Can't really think of a scenario when you'd want to use just one of the flags, but for the sake of completeness - both are available.  
 
@@ -42,6 +46,8 @@ You can set a point of interest to be included in the `stderr` output as a tempe
 To set a point of interest you need to define its coordinates by passing `--poix <X>` and `--poiy <Y>`.  
 To indicate that the coordinates are scaled up based on the interpolation scale factor, pass `--pois`.  
 To add a visual indicator of the point of interest on the output image, pass `--poic`. The indicator resembles a crosshair surrounding the PoI. The crosshair takes 2 pixels on all sides of the PoI and inverts them for visual clarity and to prevent information loss.  
+
+Note: Horizontal and vertical flips are applied **before** PoI probing.  
 
 ### Output
 
@@ -57,7 +63,7 @@ Get temperature range in JSON format:
 ```mlx90640-capture --json```
 
 Get temperature range in text format, generate `test.jpg` and set a point of interest at the center.
-```mlx90640-capture --poix 16 --poiy 12 --poic -o test.jpg`
+```mlx90640-capture --poix 16 --poiy 12 --poic -o test.jpg```
 
 Generate a horizontally and vertically flipped, 20x scaled image.
 ```mlx90640-capture -i 20 --hflip --vflip -o test.png```

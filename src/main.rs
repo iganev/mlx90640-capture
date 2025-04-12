@@ -15,6 +15,7 @@ use cli::CliArgs;
 use driver::get_mlx90640_frame;
 use flip::horizontal_flip;
 use flip::vertical_flip;
+
 use image::imageops::resize;
 use image::imageops::FilterType;
 use image::ImageBuffer;
