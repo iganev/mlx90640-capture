@@ -62,10 +62,10 @@ Measurement results are output to `stderr` as plain text by default. Passing `--
 Get temperature range in JSON format:  
 ```mlx90640-capture --json```
 
-Get temperature range in text format, generate `test.jpg` and set a point of interest at the center.
+Get temperature range in text format, generate `test.jpg` and set a point of interest at the center.  
 ```mlx90640-capture --poix 16 --poiy 12 --poic -o test.jpg```
 
-Generate a horizontally and vertically flipped, 20x scaled image.
+Generate a horizontally and vertically flipped, 20x scaled image.  
 ```mlx90640-capture -i 20 --hflip --vflip -o test.png```
 
 Generate a horizontally and vertically flipped, 20x scaled image with point of interest in the center of the 1st quadrant and output the measurement results as JSON.  
@@ -74,10 +74,10 @@ Generate a horizontally and vertically flipped, 20x scaled image with point of i
 Assuming you have ImageMagick installed. Generate a PNG image and pass it on to ImageMagick to make it semi-transparent.  
 ```mlx90640-capture -i 20 -c gray -o - | magick jpg:- -alpha set -background none -channel A -evaluate multiply 0.5 +channel test.png```
 
-Get a 20x cheap color image on a different platform than a Raspberry Pi:
+Get a 20x cheap color image on a different platform than a Raspberry Pi:  
 ```mlx90640-capture -b /dev/i2c-1 -a 51 -i 20 -c cheap -o test.jpg```
 
-Get a 10x image with center crosshair PoI on a different platform than a Raspberry Pi and JSON output:
+Get a 10x image with center crosshair PoI on a different platform than a Raspberry Pi and JSON output:  
 ```mlx90640-capture --json -b /dev/i2c-1 -a 0x33 -i 10 --poix 16 --poiy 12 --poic -o test.jpg```
 ## Help
 
@@ -109,6 +109,6 @@ Options:
 
 Thanks to [rpmlx90640](https://crates.io/crates/rpmlx90640) and [mlx9064x](https://crates.io/crates/mlx9064x) crates that provide the driver backends for Raspberry Pi and Linux Embedded HAL.
 
-# License
+## License
 
 This project is open sourced under the MIT License.
